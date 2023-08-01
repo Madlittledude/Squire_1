@@ -75,6 +75,7 @@ def spearhead_library():
     if uploaded_file is not None:
         with open(os.path.join("Squire_GPT/Library/PDF", uploaded_file.name), "wb") as file:
             file.write(uploaded_file.getbuffer())
+        st.session_state.processed = False
         st.success(f"{uploaded_file.name} has been uploaded successfully!")
 
     pdf_folder_path = 'Squire_GPT/Library/PDF'
@@ -84,13 +85,20 @@ def spearhead_library():
     if "show_textbox" not in st.session_state:
         st.session_state.show_textbox = False
 
-    if "processed" not in st.session_state:
-        st.session_state.processed = False
+    if "processed_files" not in st.session_state:
+        st.session_state.processed_files = []
 
+    # Check if there are new files to process
+    new_files = [f for f in pdf_files if f not in st.session_state.processed_files]
+    
     # Initialize status
     status = [None]
 
-    if pdf_files and not st.session_state.processed:
+    # If there are new files to process, show the "Process" button
+    if new_files:
+        st.session_state.processed = False
+
+    if not st.session_state.processed:
         if st.button("Process"):
             pathtoPDF = pdf_folder_path
             pathtoText = 'Squire_GPT/Library/TEXT'
@@ -107,10 +115,10 @@ def spearhead_library():
             progress_bar.empty()  # Remove the progress bar
             status_box.write(status[0])  # Update the UI from the main thread
             st.session_state.processed = True
+            st.session_state.processed_files.extend(new_files)  # Mark these files as processed
             st.session_state.show_textbox = True
 
-    # Here we unpack all three returned values from load_data_and_index
-    index, query_engine, loaded_pdfs = load_data_and_index()
+    index, query_engine, loaded_pdfs = load_data_and_index()  # Load the data and get the loaded pdf filenames
     
     st.write("PDFs Loaded into Vector DB:", ', '.join([Path(pdf).stem for pdf in loaded_pdfs]))  # Display the loaded pdf names
 
