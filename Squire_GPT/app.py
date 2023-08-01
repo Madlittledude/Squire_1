@@ -21,7 +21,7 @@ def main():
 def home_page():
     st.title("Welcome to Squire                :scales:")
   
-    st.write("This is your account page. On the sidebar you can use the Brain_Storm tool of the SpearHead_Library tool.")
+    st.write("On the sidebar you can select between the Brain_Storm tool of the SpearHead_Library tool.")
 
 
 
