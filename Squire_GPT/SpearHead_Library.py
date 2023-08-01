@@ -34,7 +34,11 @@ def load_data_and_index():
     documents = SimpleDirectoryReader('Squire_GPT/Library/TEXT', file_metadata=filename_fn).load_data()
     index = VectorStoreIndex.from_documents(documents)
     query_engine = index.as_query_engine(max_nodes=6, max_tokens=500)
-    return index, query_engine, [doc['file_name'] for doc in documents]  # Return the filenames of loaded documents
+    
+    # Use appropriate method/attribute to extract file_name from each document
+    loaded_pdfs = [doc.metadata['file_name'] for doc in documents]
+    
+    return index, query_engine, loaded_pdfs
 
 
 def get_response(user_query, query_engine):
