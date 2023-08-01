@@ -68,7 +68,7 @@ def chatbot_ui_page():
     if "first_message_sent" not in st.session_state:
         st.session_state.first_message_sent = False
 
-   openai.api_key = os.environ['OPENAI_API_KEY']
+    openai.api_key = os.environ['OPENAI_API_KEY']
 
 
     # Display logic
