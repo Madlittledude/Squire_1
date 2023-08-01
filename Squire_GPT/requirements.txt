@@ -1,0 +1,4 @@
+streamlit==1.25.0
+pdf2image==1.16.3  # I'm assuming this is the closest match to "pdf2text" based on your package list.
+llama-index==0.7.14
+openai==0.27.8
