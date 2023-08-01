@@ -34,11 +34,8 @@ def load_data_and_index():
     documents = SimpleDirectoryReader('Squire_GPT/Library/TEXT', file_metadata=filename_fn).load_data()
     index = VectorStoreIndex.from_documents(documents)
     query_engine = index.as_query_engine(max_nodes=6, max_tokens=500)
-    
-    # Use appropriate method/attribute to extract file_name from each document
-    loaded_pdfs = [doc.metadata['file_name'] for doc in documents]
-    
-    return index, query_engine, loaded_pdfs
+    return index, query_engine, [doc.metadata['file_name'] for doc in documents]  # MODIFIED this line
+
 
 
 def get_response(user_query, query_engine):
@@ -111,15 +108,17 @@ def spearhead_library():
             status_box.write(status[0])  # Update the UI from the main thread
             st.session_state.processed = True
             st.session_state.show_textbox = True
-    index, query_engine, loaded_pdfs = load_data_and_index()  # Load the data and get the loaded pdf filenames
+
+    # Here we unpack all three returned values from load_data_and_index
+    index, query_engine, loaded_pdfs = load_data_and_index()
     
     st.write("PDFs Loaded into Vector DB:", ', '.join([Path(pdf).stem for pdf in loaded_pdfs]))  # Display the loaded pdf names
-
 
     if st.session_state.show_textbox:
         user_query = st.text_input("Enter your question:")
 
-        index, query_engine = load_data_and_index()
+        # We unpack all three values but ignore the third one using an underscore
+        index, query_engine, _ = load_data_and_index()
 
         if user_query:
             response_text, sources = get_response(user_query, query_engine)
@@ -131,6 +130,7 @@ def spearhead_library():
             st.write("Sources:", ', '.join(source_strings))
         else:
             st.write("Put new Questions into the Text box and press Enter. Delete old one before entering new one.")
+
 
 
 if __name__ == "__main__":
